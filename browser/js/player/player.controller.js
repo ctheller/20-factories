@@ -2,35 +2,38 @@
 
 juke.controller('PlayerCtrl', function ($scope, $rootScope, PlayerFactory) {
 
-  // initialize audio player (note this kind of DOM stuff is odd for Angular)
-  var audio = document.createElement('audio');
-  audio.addEventListener('ended', function () {
-    $scope.next();
-    // $scope.$apply(); // triggers $rootScope.$digest, which hits other scopes
-    $scope.$evalAsync(); // likely best, schedules digest if none happening
-  });
-  audio.addEventListener('timeupdate', function () {
-    $scope.progress = 100 * audio.currentTime / audio.duration;
-    // $scope.$digest(); // re-computes current template only (this scope)
-    $scope.$evalAsync(); // likely best, schedules digest if none happening
-  });
 
   // state
-  $scope.currentSong;
-  $scope.playing = false;
+  $scope.getCurrentSong = function(){
+    return PlayerFactory.getCurrentSong();
+  }
+
+  $scope.isPlaying = function(){
+    return PlayerFactory.isPlaying();
+  }
+
+  $scope.getProgress = function(){
+    return PlayerFactory.getProgress()*100;
+  }
+
 
   // main toggle
-  $scope.toggle = function (song) {
-    if ($scope.playing) $rootScope.$broadcast('pause');
-    else $rootScope.$broadcast('play', song);
+  $scope.toggle = function () {
+    if (PlayerFactory.isPlaying()) PlayerFactory.pause();
+    else PlayerFactory.resume();
   };
 
-  // incoming events (from Album or toggle)
-  $scope.$on('pause', pause);
-  $scope.$on('play', play);
+  $scope.prev = function(){
+    PlayerFactory.previous();
+  }
+
+  $scope.next = function(){
+    PlayerFactory.next();    
+  }
+
 
   function seek (decimal) {
-    audio.currentTime = audio.duration * decimal;
+    PlayerFactory.audio.currentTime = PlayerFactory.audio.duration * decimal;
   }
 
   $scope.handleProgressClick = function (evt) {

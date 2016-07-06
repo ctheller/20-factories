@@ -27,7 +27,7 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
     if (PlayerFactory.isPlaying() && song === PlayerFactory.getCurrentSong()) {
       PlayerFactory.pause()
     } else if (PlayerFactory.getCurrentSong() === song) PlayerFactory.resume()
-    else PlayerFactory.start(song);
+    else PlayerFactory.start(song, $scope.album.songs);
   };
 
   // // a "true" modulo that wraps negative to the top of the range
