@@ -4,23 +4,34 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
 
     // add album length to scope
 
+  $scope.show = false;
+
   $scope.isPlaying = function() {return PlayerFactory.isPlaying()}
   $scope.getCurrentSong = function() {return PlayerFactory.getCurrentSong()}
 
-
-  AlbumFactory.fetchById(1)
-  .then(function (album){
-    $scope.album = album
-    return StatsFactory.totalTime(album)
-  })
-  .then(function(totalTime){
-      var mins = Math.floor(totalTime/60);
-      var secs = Math.floor(totalTime)%60;
-      if (secs < 10) secs = '0'+secs;
-      var time = mins+":"+secs;
-      $scope.album.totalTime = time;
+  $scope.$on('showOneAlbum', function(event, id){
+    $scope.show = true;
+    AlbumFactory.fetchById(id)
+    .then(function (album){
+      $scope.album = album
+      return StatsFactory.totalTime(album)
     })
-  .catch($log.error); // $log service can be turned on and off; also, pre-bound
+    .then(function(totalTime){
+        var mins = Math.floor(totalTime/60);
+        var secs = Math.floor(totalTime)%60;
+        if (secs < 10) secs = '0'+secs;
+        var time = mins+":"+secs;
+        $scope.album.totalTime = time;
+      })
+    .catch($log.error);
+  
+  })
+
+  $scope.$on('showAllAlbums', function(){
+    $scope.show = false;
+  })
+
+ // $log service can be turned on and off; also, pre-bound
 
   // main toggle
   $scope.toggle = function (song) {
@@ -47,7 +58,9 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
 
 });
 
-juke.controller('AllAlbumsCtrl', function ($scope, $log, AlbumFactory) {
+juke.controller('AllAlbumsCtrl', function ($rootScope, $scope, $log, AlbumFactory) {
+
+  $scope.show = false;
 
   AlbumFactory.fetchAll()
   .then(function(albums){
@@ -57,6 +70,18 @@ juke.controller('AllAlbumsCtrl', function ($scope, $log, AlbumFactory) {
     $scope.albums = albums;
   })
   .catch($log.error);
+
+  $scope.$on('showAllAlbums', function(){
+    $scope.show = !$scope.show;
+  })
+
+  $scope.goToAlbum = function(id){
+    console.log(id);
+    $scope.show = false;
+    $rootScope.$broadcast('showOneAlbum', id);
+  }
+
+
 
 });
 
