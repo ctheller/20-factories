@@ -11,6 +11,7 @@
     <script src="/js/player/player.controller.js" defer></script>
     <script src="/js/player/player.factory.js" defer></script>
     <script src="/js/album/stats.factory.js" defer></script>
+    <script src="/js/album/album.factory.js" defer></script>
   </head>
   <body ng-app="juke">
     <div id="main" class="container-fluid">
@@ -27,7 +28,7 @@
       </div>
 
       <div class="col-xs-10">
-        <div class="album" ng-controller="AlbumCtrl">
+        <div ng-show='false' class="album" ng-controller="AlbumCtrl">
           <p>
             <h3>{{ album.name }}</h3><p>{{album.totalTime}}</p>
             <img ng-src="{{ album.imageUrl }}" class="img-thumbnail">
@@ -55,6 +56,25 @@
             </tbody>
           </table>
         </div>
+
+
+        <div ng-show="true" ng-controller="AllAlbumsCtrl">
+          <h3>Albums</h3>
+          <div class="row">
+            <div ng-repeat="album in albums" class="col-xs-4">
+              <a class="thumbnail" href="#">
+                <img ng-src="{{ album.imageUrl }}">
+                <div class="caption">
+                  <h5>
+                    <span>{{album.name}}</span>
+                  </h5>
+                  <small>{{album.songs.length}}</small>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <footer>

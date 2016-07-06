@@ -1,3 +1,5 @@
+'use strict';
+
 juke.factory('StatsFactory', function ($q) {
   var statsObj = {};
   statsObj.totalTime = function (album) {

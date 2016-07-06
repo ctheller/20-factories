@@ -1,33 +1,22 @@
 'use strict';
 
-juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFactory) {
-
-  // load our initial data
-  $http.get('/api/albums/')
-  .then(function (res) { return res.data; })
-  .then(function (albums) {
-    return $http.get('/api/albums/' + albums[0].id); // temp: get one
-  })
-  .then(function (res) { return res.data; })
-  .then(function (album) {
-    album.imageUrl = '/api/albums/' + album.id + '/image';
-    album.songs.forEach(function (song, i) {
-      song.audioUrl = '/api/songs/' + song.id + '/audio';
-      song.albumIndex = i;
-    });
-    $scope.album = album;
+juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, AlbumFactory) {
 
     // add album length to scope
-    return StatsFactory.totalTime(album)
-  })
-  .then(function(totalTime){
-      var mins = Math.floor(totalTime/60);
-      var secs = Math.floor(totalTime)%60;
-      if (secs < 10) secs = '0'+secs;
-      var time = mins+":"+secs;
-      $scope.album.totalTime = time;
-    })
-  .catch($log.error); // $log service can be turned on and off; also, pre-bound
+
+
+  // AlbumFactory.fetchById
+
+  //   return StatsFactory.totalTime(album)
+  // })
+  // .then(function(totalTime){
+  //     var mins = Math.floor(totalTime/60);
+  //     var secs = Math.floor(totalTime)%60;
+  //     if (secs < 10) secs = '0'+secs;
+  //     var time = mins+":"+secs;
+  //     $scope.album.totalTime = time;
+  //   })
+  // .catch($log.error); // $log service can be turned on and off; also, pre-bound
 
   // main toggle
   $scope.toggle = function (song) {
@@ -67,3 +56,22 @@ juke.controller('AlbumCtrl', function ($scope, $http, $rootScope, $log, StatsFac
 
 
 });
+
+juke.controller('AllAlbumsCtrl', function ($scope, $log, AlbumFactory) {
+
+  $scope.albums = [];
+
+  AlbumFactory.fetchAll()
+  .then(function(albums){
+    albums.forEach(function(album){
+      AlbumFactory.fetchById(album.id)
+      .then(function(eachAlbumInfo){
+        $scope.albums.push(eachAlbumInfo);
+      })
+    })
+  })
+  .catch($log.error);
+
+});
+
+
