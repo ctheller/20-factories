@@ -2,6 +2,7 @@
 
 juke.factory('PlayerFactory', function($rootScope){
   var mediaPlayer = {};
+  var progress = 0;
   mediaPlayer.audio = document.createElement('audio');
 
   mediaPlayer.start = function (song, songList){
@@ -42,13 +43,12 @@ juke.factory('PlayerFactory', function($rootScope){
   }
 
   mediaPlayer.getProgress = function (){
-    var progress = mediaPlayer.audio.currentTime / mediaPlayer.audio.duration;
-    if (isNaN(progress)) progress = 0;
     return progress
   }
 
   mediaPlayer.audio.addEventListener('timeupdate', function(){
-    mediaPlayer.getProgress();
+    progress = mediaPlayer.audio.currentTime / mediaPlayer.audio.duration;
+    if (isNaN(progress)) progress = 0;
     $rootScope.$evalAsync();
   })
 
