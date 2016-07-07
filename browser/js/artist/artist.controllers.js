@@ -54,13 +54,15 @@ juke.controller('ArtistCtrl', function ($rootScope, $scope, $log, ArtistFactory,
       return album.id === id
     })
     $scope.album = $scope.album[0]
-    console.log($scope.album)
+
+    console.log($scope.album.songs)
 
   }
 
   $scope.isPlaying = function() {return PlayerFactory.isPlaying()}
   $scope.getCurrentSong = function() {return PlayerFactory.getCurrentSong()}
   $scope.toggle = function (song) {
+    console.log('in here', song)
     if (PlayerFactory.isPlaying() && song === PlayerFactory.getCurrentSong()) {
       PlayerFactory.pause()
     } else if (PlayerFactory.getCurrentSong() === song) PlayerFactory.resume()

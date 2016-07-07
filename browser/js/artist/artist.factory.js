@@ -17,6 +17,9 @@ juke.factory('ArtistFactory', function($http, $log) {
         return res.data; })
       .then(function(albums) {
         albums.forEach(function(album) {
+          album.songs.forEach(function(song){
+            song.audioUrl = '/api/songs/' + song.id + '/audio'
+          })
           album.imageUrl = '/api/albums/' + album.id + '/image'
         })
         return albums

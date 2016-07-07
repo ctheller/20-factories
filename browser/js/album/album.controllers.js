@@ -34,6 +34,8 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
 
   // main toggle
   $scope.toggle = function (song) {
+        console.log('or in here', song)
+
     if (PlayerFactory.isPlaying() && song === PlayerFactory.getCurrentSong()) {
       PlayerFactory.pause()
     } else if (PlayerFactory.getCurrentSong() === song) PlayerFactory.resume()
