@@ -9,11 +9,15 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
   $scope.isPlaying = function() {return PlayerFactory.isPlaying()}
   $scope.getCurrentSong = function() {return PlayerFactory.getCurrentSong()}
 
-  $scope.$on('showOneAlbum', function(event, id){
-    $scope.show = true;
-    AlbumFactory.fetchById(id)
+  $scope.$on('viewThings', function(event, viewObj){
+    if (viewObj.name !== 'oneAlbum'){
+      $scope.show = false;
+      return
+    }
+    AlbumFactory.fetchById(viewObj.id)
     .then(function (album){
       $scope.album = album
+      $scope.show = true;
       return StatsFactory.totalTime(album)
     })
     .then(function(totalTime){
@@ -24,13 +28,8 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
         $scope.album.totalTime = time;
       })
     .catch($log.error);
-  
-  })
 
-  $scope.$on('showAllAlbums', function(){
-    $scope.show = false;
   })
-
  // $log service can be turned on and off; also, pre-bound
 
   // main toggle
@@ -40,21 +39,6 @@ juke.controller('AlbumCtrl', function ($scope, $rootScope, $log, StatsFactory, A
     } else if (PlayerFactory.getCurrentSong() === song) PlayerFactory.resume()
     else PlayerFactory.start(song, $scope.album.songs);
   };
-
-  // // a "true" modulo that wraps negative to the top of the range
-  // function mod (num, m) { return ((num % m) + m) % m; };
-
-  // // jump `interval` spots in album (negative to go back, default +1)
-  // function skip (interval) {
-  //   // if (!$scope.currentSong) return;
-  //   // var index = $scope.currentSong.albumIndex;
-  //   // index = mod( (index + (interval || 1)), $scope.album.songs.length );
-  //   // $scope.currentSong = $scope.album.songs[index];
-  //   // if ($scope.playing) $rootScope.$broadcast('play', $scope.currentSong);
-  // };
-  // function next () { skip(1); };
-  // function prev () { skip(-1); };
-
 
 });
 
@@ -71,14 +55,20 @@ juke.controller('AllAlbumsCtrl', function ($rootScope, $scope, $log, AlbumFactor
   })
   .catch($log.error);
 
-  $scope.$on('showAllAlbums', function(){
+  $scope.$on('viewThings', function(event, viewObj){
+    if (viewObj.name !== 'allAlbums'){
+
+      $scope.show = false;
+      return
+
+    }
     $scope.show = !$scope.show;
   })
 
   $scope.goToAlbum = function(id){
     console.log(id);
     $scope.show = false;
-    $rootScope.$broadcast('showOneAlbum', id);
+    $rootScope.$broadcast('viewThings', {id: id, name: 'oneAlbum'});
   }
 
 
